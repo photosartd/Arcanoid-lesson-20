@@ -15,7 +15,7 @@ class Circle:
         self.diff_y = 0
         while self.diff_x == 0 or self.diff_y == 0:
             self.diff_x = random.randint(-3,3)
-            self.diff_y = random.randint(1,7)
+            self.diff_y = random.randint(3,5)
     #метод отрисовки: принимает в себя объект "окна (surface)"
     def draw(self, surface1):
         pygame.draw.circle(surface=surface1, color=self.color, center=(self.x, self.y), radius=self.radius)
@@ -54,7 +54,7 @@ class Circle:
                 self.is_jumping = False
                 self.jump_count = 10
 
-    def random_movement(self, width, platform, wall):
+    def random_movement(self, width, platform, wall) -> bool:
         #изменяются координаты на diff_x diff_y
         self.wall_collision(wall)
         self.collision(platform)
@@ -65,15 +65,22 @@ class Circle:
             self.diff_x = -self.diff_x
         if self.y + self.radius >= width or self.y - self.radius <=0:
             self.diff_y = -self.diff_y
+        
+        if self.y + self.radius >= width:
+            #endgame
+            return True
+        else:
+            #continue game
+            return False
 
     def collision(self, brick):
         #TODO
-        if (self.y + self.radius) >= brick.top \
+        if ((self.y + self.radius) >= brick.top \
             and (self.y + self. radius) <= brick.bottom \
-            and (brick.left <= self.x <= brick.right) or \
-            (self.y - self.radius) <= brick.bottom \
+            and (brick.left <= self.x <= brick.right)) or \
+            ((self.y - self.radius) <= brick.bottom \
             and (self.y - self.radius) >= brick.top \
-            and (brick.left <= self.x <= brick.right):
+            and (brick.left <= self.x <= brick.right)):
             self.diff_y = -self.diff_y
 
             if isinstance(brick, Platform):
